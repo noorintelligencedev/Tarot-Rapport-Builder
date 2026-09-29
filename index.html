@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3-Minute Tarot Rapport Builder</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#121212',
+                        darker: '#0a0a0a',
+                        parchment: '#F5E6CE',
+                        parchmentMuted: '#C2B6A3',
+                        gold: '#D4AF37',
+                        goldMuted: '#8C7426',
+                    },
+                    fontFamily: {
+                        serif: ['Cinzel', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #121212;
+            color: #F5E6CE;
+            background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #0a0a0a 100%);
+            min-height: 100vh;
+        }
+        
+        .gold-border {
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5), inset 0 0 15px rgba(212, 175, 55, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .gold-border:hover {
+            border-color: rgba(212, 175, 55, 0.6);
+            box-shadow: 0 4px 25px rgba(0,0,0,0.6), inset 0 0 20px rgba(212, 175, 55, 0.1);
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+            border: 2px solid #D4AF37;
+            color: #D4AF37;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .btn-gold:hover {
+            background: #D4AF37;
+            color: #121212;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+        }
+
+        .card-container {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .card-container.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Delays for staggered animation */
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-300 { transition-delay: 300ms; }
+    </style>
+</head>
+<body class="font-sans antialiased p-4 md:p-8 flex flex-col items-center">
+
+    <header class="w-full max-w-6xl text-center mb-10 mt-4">
+        <h1 class="font-serif text-3xl md:text-4xl text-gold mb-2 tracking-wider">The 3-Minute Bridge</h1>
+        <p class="text-parchmentMuted text-sm md:text-base max-w-2xl mx-auto mb-8 font-light">
+            Press to generate an immediate, radically honest psychological profile. No client input required.
+        </p>
+        
+        <button id="generateBtn" class="btn-gold font-serif font-semibold py-4 px-10 text-lg md:text-xl rounded-sm w-full max-w-md mx-auto cursor-pointer focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-dark">
+            Generate Reading (No Question)
+        </button>
+    </header>
+
+    <main id="readingDisplay" class="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-3 gap-6 hidden">
+        
+        <!-- The Anchor (Card 1) -->
+        <div id="card-anchor" class="card-container delay-100 gold-border rounded-lg bg-darker p-6 md:p-8 flex flex-col relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-gold to-transparent opacity-50"></div>
+            <div class="text-xs font-bold tracking-widest text-goldMuted uppercase mb-1">0 - 30 Seconds</div>
+            <h2 class="font-serif text-2xl text-gold mb-4 border-b border-gold/20 pb-2">I. The Anchor</h2>
+            
+            <div class="flex-grow">
+                <div class="text-sm text-parchmentMuted uppercase tracking-wider mb-1">Drawn Card</div>
+                <div class="card-name font-serif text-xl text-parchment mb-4">--</div>
+                
+                <div class="text-sm text-parchmentMuted uppercase tracking-wider mb-1">Prevailing Energy</div>
+                <div class="card-keyword font-sans font-bold text-lg text-gold mb-6 bg-gold/10 inline-block px-3 py-1 rounded">--</div>
+                
+                <div class="text-sm text-parchmentMuted uppercase tracking-wider mb-2">Opening Script</div>
+                <p class="card-script text-parchment text-lg leading-relaxed font-light italic border-l-2 border-gold/30 pl-4">
+                    --
+                </p>
+            </div>
+        </div>
+
+        <!-- The Mirror (Card 2) -->
+        <div id="card-mirror" class="card-container delay-200 gold-border rounded-lg bg-darker p-6 md:p-8 flex flex-col relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-gold to-transparent opacity-50"></div>
+            <div class="text-xs font-bold tracking-widest text-goldMuted uppercase mb-1">30 - 90 Seconds</div>
+            <h2 class="font-serif text-2xl text-gold mb-4 border-b border-gold/20 pb-2">II. The Mirror</h2>
+            
+            <div class="flex-grow">
+                <div class="text-sm text-parchmentMuted uppercase tracking-wider mb-1">Drawn Card</div>
+                <div class="card-name font-serif text-xl text-parchment mb-4">--</div>
+                
+                <div class="text-sm text-parchmentMuted uppercase tracking-wider mb-1">Hidden Friction</div>
+                <div class="card-keyword font-sans font-bold text-lg text-gold mb-6 bg-gold/10 inline-block px-3 py-1 rounded">--</div>
+                
+                <div class="text-sm text-parchmentMuted uppercase tracking-wider mb-2">Challenge Script</div>
+                <p class="card-script text-parchment text-lg leading-relaxed font-light italic border-l-2 border-gold/30 pl-4">
+                    --
+                </p>
+            </div>
+        </div>
+
+        <!-- The Pivot (Card 3) -->
+        <div id="card-pivot" class="card-container delay-300 gold-border rounded-lg bg-darker p-6 md:p-8 flex flex-col relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-gold to-transparent opacity-50"></div>
+            <div class="text-xs font-bold tracking-widest text-goldMuted uppercase mb-1">90 - 180 Seconds</div>
+            <h2 class="font-serif text-2xl text-gold mb-4 border-b border-gold/20 pb-2">III. The Pivot</h2>
+            
+            <div class="flex-grow">
+                <div class="text-sm text-parchmentMuted uppercase tracking-wider mb-1">Drawn Card</div>
+                <div class="card-name font-serif text-xl text-parchment mb-4">--</div>
+                
+                <div class="text-sm text-parchmentMuted uppercase tracking-wider mb-1">Necessary Shift</div>
+                <div class="card-keyword font-sans font-bold text-lg text-gold mb-6 bg-gold/10 inline-block px-3 py-1 rounded">--</div>
+                
+                <div class="text-sm text-parchmentMuted uppercase tracking-wider mb-2">Coaching Prompt</div>
+                <p class="card-script text-parchment text-lg leading-relaxed font-light italic border-l-2 border-gold/30 pl-4">
+                    --
+                </p>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // Database of cards specifically written for blind, fast-paced psychological readings
+        const tarotDeck = [
+            {
+                name: "The Tower",
+                anchor: { keyword: "SUDDEN SHIFT", script: "Right out of the gate, I'm looking at a recent disruption in your foundation—something you thought was stable, or a plan you relied on, has abruptly given way." },
+                mirror: { keyword: "RESISTING COLLAPSE", script: "The real friction here isn't the event itself, but how much of your energy you are burning trying to hold up walls that are meant to fall." },
+                pivot: { keyword: "CLEARING DEBRIS", script: "This energy is ultimately about what you build on the empty lot. What structure in your life are you finally ready to let go of so you can start over?" }
+            },
+            {
+                name: "Three of Swords",
+                anchor: { keyword: "UNRESOLVED GRIEF", script: "I am immediately picking up on a sharp, lingering pain. You are carrying a specific disappointment or wound that hasn't been properly aired out yet." },
+                mirror: { keyword: "IDENTITY IN PAIN", script: "The hard truth is that you are picking at the scab. You are letting the narrative of this betrayal or let-down become a core part of your current identity." },
+                pivot: { keyword: "CONSCIOUS RELEASE", script: "Pain is inevitable, but this ongoing suffering is a choice. What part of this story are you finally ready to stop retelling yourself?" }
+            },
+            {
+                name: "Eight of Swords",
+                anchor: { keyword: "PARALYSIS", script: "Before you even ask a question, I'm feeling a heavy sense of paralysis. You are in a situation where you feel completely trapped, restricted, and out of options." },
+                mirror: { keyword: "COMFORT IN VICTIMHOOD", script: "If we look deeper, the ropes tying you are entirely loose. The reality is that staying 'stuck' is protecting you from the terrifying responsibility of having to make a hard choice." },
+                pivot: { keyword: "RECLAIMING AGENCY", script: "It is time to take off the blindfold. What is the choice you already know you need to make, but have been too afraid to voice out loud?" }
+            },
+            {
+                name: "The Devil",
+                anchor: { keyword: "TOXIC ATTACHMENT", script: "What's jumping out immediately is a heavy, almost magnetic attachment. You are caught in a cycle, a habit, or a dynamic that gives you intense highs but drains your autonomy." },
+                mirror: { keyword: "WILLFUL CAPTIVITY", script: "The shadow side here is that you aren't a victim to this. On some level, you are consenting to this toxicity because it provides a familiar, predictable comfort." },
+                pivot: { keyword: "BREAKING THE CHAIN", script: "You hold the key to your own collar. Where in your life are you ready to trade immediate gratification for long-term peace?" }
+            },
+            {
+                name: "Four of Cups",
+                anchor: { keyword: "APATHY", script: "I'm instantly seeing a wall of emotional static. There is a prevailing sense of boredom, disillusionment, and a feeling of 'is this all there is?' in your current energy." },
+                mirror: { keyword: "BLINDNESS TO BLESSINGS", script: "The danger here is that your fixation on what you *don't* have is making you completely blind to the actual, tangible offers and love currently being handed to you." },
+                pivot: { keyword: "RE-ENGAGEMENT", script: "You are starving yourself at a banquet. What is one good thing in your life right now that you have been actively taking for granted?" }
+            },
+            {
+                name: "Nine of Wands",
+                anchor: { keyword: "HYPER-VIGILANCE", script: "Your energy is coming through as deeply exhausted but absolutely refusing to rest. You are standing guard, waiting for the next shoe to drop." },
+                mirror: { keyword: "DEFENSIVE ISOLATION", script: "Your defense mechanisms have worked so well that they are now keeping out the good along with the bad. You are treating everyone like a potential threat." },
+                pivot: { keyword: "LOWERING THE SHIELD", script: "You have survived the battle, but you are still wearing the armor in peacetime. Where do you need to allow yourself to finally be vulnerable?" }
+            },
+            {
+                name: "Seven of Swords",
+                anchor: { keyword: "AVOIDANCE", script: "Right away, I'm picking up on evasion. There is a situation in your life right now where you are tiptoeing around the truth or avoiding a direct confrontation." },
+                mirror: { keyword: "SELF-DECEPTION", script: "You think you are being strategic by avoiding this, but the person you are deceiving the most is yourself. The avoidance is costing you more peace than the conflict would." },
+                pivot: { keyword: "RADICAL HONESTY", script: "The sneaking around is draining your life force. What hard conversation have you been putting off that you know needs to happen today?" }
+            },
+            {
+                name: "Two of Swords",
+                anchor: { keyword: "STALEMATE", script: "I am seeing a massive energetic roadblock. You are caught dead-center between two opposing choices, refusing to look at the facts of either." },
+                mirror: { keyword: "INTELLECTUAL COWARDICE", script: "You are using 'confusion' as a shield. You aren't actually confused; you know exactly what you need to do, you just don't want to deal with the fallout." },
+                pivot: { keyword: "FORCED MOVEMENT", script: "Not making a choice is still making a choice, and time is running out. If you had to decide right this second, which path brings you relief?" }
+            },
+            {
+                name: "Five of Pentacles",
+                anchor: { keyword: "SCARCITY MINDSET", script: "The immediate feeling I get is one of isolation and lack. You are operating from a place of feeling left out in the cold, unsupported, and financially or emotionally drained." },
+                mirror: { keyword: "REFUSING HELP", script: "The tragedy here is that warmth and support are right next to you, but your pride or your belief that you 'have to do it alone' is keeping you freezing in the snow." },
+                pivot: { keyword: "ASKING FOR SUPPORT", script: "You do not have to prove your worth by suffering in silence. Who or what are you refusing to ask for help right now?" }
+            },
+            {
+                name: "Death",
+                anchor: { keyword: "NECESSARY ENDING", script: "I am looking at a profound, unavoidable transition. Something in your life has organically run its course, and the chapter is definitively closing." },
+                mirror: { keyword: "CLINGING TO GHOSTS", script: "The pain you are feeling isn't from the ending itself, it's from dragging the corpse of this situation around. You are refusing to let what is dead be buried." },
+                pivot: { keyword: "EMBRACING THE VOID", script: "Nature requires a void before it can create new life. What identity, relationship, or job are you finally ready to mourn and release?" }
+            },
+            {
+                name: "The Moon",
+                anchor: { keyword: "ILLUSION & ANXIETY", script: "Your energy feels submerged right now. I'm seeing a lot of anxiety, overthinking, and a situation where nothing is as clear as it seems on the surface." },
+                mirror: { keyword: "PARANOID PROJECTION", script: "You are letting your deepest insecurities write the script. You are reacting to shadows and projecting your own fears onto other people's motives." },
+                pivot: { keyword: "SEEKING CLARITY", script: "You cannot navigate in the dark based on fear. What is one concrete, verifiable fact you know for sure about your situation right now?" }
+            },
+            {
+                name: "Judgement",
+                anchor: { keyword: "THE WAKE-UP CALL", script: "I'm hearing a loud, unavoidable call to accountability. You are at a crossroads where you are being asked to rise to a higher level of maturity." },
+                mirror: { keyword: "IGNORING THE SUMMONS", script: "You keep hitting snooze on your own evolution. You are trying to fit your current, expanded self into a small life that you outgrew years ago." },
+                pivot: { keyword: "STEPPING UP", script: "There is no going back to sleep after this realization. What major life change is your intuition screaming at you to make?" }
+            }
+        ];
+
+        document.getElementById('generateBtn').addEventListener('click', function() {
+            // Disable button briefly to prevent spamming
+            const btn = this;
+            btn.disabled = true;
+            btn.innerText = "Connecting...";
+            
+            // Hide current cards if they are showing
+            const containers = document.querySelectorAll('.card-container');
+            containers.forEach(el => el.classList.remove('visible'));
+            
+            // Get 3 unique random cards
+            setTimeout(() => {
+                const shuffled = [...tarotDeck].sort(() => 0.5 - Math.random());
+                const selected = shuffled.slice(0, 3);
+                
+                // Card 1: Anchor
+                document.querySelector('#card-anchor .card-name').innerText = selected[0].name;
+                document.querySelector('#card-anchor .card-keyword').innerText = selected[0].anchor.keyword;
+                document.querySelector('#card-anchor .card-script').innerText = `"${selected[0].anchor.script}"`;
+                
+                // Card 2: Mirror
+                document.querySelector('#card-mirror .card-name').innerText = selected[1].name;
+                document.querySelector('#card-mirror .card-keyword').innerText = selected[1].mirror.keyword;
+                document.querySelector('#card-mirror .card-script').innerText = `"${selected[1].mirror.script}"`;
+                
+                // Card 3: Pivot
+                document.querySelector('#card-pivot .card-name').innerText = selected[2].name;
+                document.querySelector('#card-pivot .card-keyword').innerText = selected[2].pivot.keyword;
+                document.querySelector('#card-pivot .card-script').innerText = `"${selected[2].pivot.script}"`;
+                
+                // Show the grid and trigger animations
+                document.getElementById('readingDisplay').classList.remove('hidden');
+                
+                // Small delay to allow display:block to register before adding opacity class
+                setTimeout(() => {
+                    containers.forEach(el => el.classList.add('visible'));
+                }, 50);
+
+                // Reset button
+                btn.disabled = false;
+                btn.innerText = "Generate New Reading";
+                
+            }, 600); // 600ms artificial delay for dramatic effect
+        });
+    </script>
+</body>
+</html>
